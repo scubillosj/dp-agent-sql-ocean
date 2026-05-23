@@ -83,8 +83,32 @@ docker run --rm -p 8000:8000 `
 
 Abre `http://localhost:8000`.
 
+## EasyPanel (Droplet)
+
+En el `.env` de EasyPanel pon OpenAI, Supabase y Google.
+
+### Google en Base64 (recomendado)
+
+En PowerShell (local):
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("credentials\tu-archivo.json")) | Set-Clipboard
+```
+
+En EasyPanel `.env`:
+
+```env
+GOOGLE_CLOUD_PROJECT=datapath-prueba
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_CREDENTIALS_B64=pega_la_linea_base64_aqui
+```
+
+**No** uses `GOOGLE_APPLICATION_CREDENTIALS=credentials/archivo.json` en EasyPanel.
+
+Guardar → **Redeploy**. Tras cambios de código: `git push` y redeploy en EasyPanel.
+
 ## Notas
 
-- **No** uses GitHub Actions para secretos; van en el panel de DO.
-- Si cambias código: `git push` y DO redeploya solo (si activaste auto-deploy).
+- **No** uses GitHub Actions para secretos; van en el panel de DO / EasyPanel.
+- Si cambias código: `git push` y redeploy.
 - El histórico de chat y las tablas de LangGraph se crean solos en Supabase al primer arranque.
