@@ -1,0 +1,36 @@
+# No copiar secretos ni entorno local al contexto de build
+.env
+.env.*
+!.env.example
+
+# Credenciales GCP (en DO van como variable GOOGLE_CREDENTIALS_JSON)
+credentials/**/*.json
+credentials/**/*.pem
+
+# Python / tooling local
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.python-version
+
+# Git / IDE
+.git/
+.github/
+.vscode/
+.idea/
+.claude/
+
+# Streamlit / LangGraph local
+.streamlit/
+
+# Logs y temporales
+*.log
+logs/
+*.tmp
+*.bak
+
+# macOS
+.DS_Store

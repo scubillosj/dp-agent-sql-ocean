@@ -1,0 +1,115 @@
+# =============================================================================
+# Secretos — NUNCA commitear
+# =============================================================================
+.env
+.env.*
+!.env.example
+
+# Claves de API / tokens sueltos (por si se crean fuera de .env)
+*.pem
+*.key
+secrets/
+
+
+# =============================================================================
+# Google Cloud — service accounts y credenciales locales
+# =============================================================================
+# Toda la carpeta credentials/ excepto marcadores y documentación
+credentials/**
+!credentials/.gitkeep
+!credentials/README.md
+
+# JSON de service account si se descargan en la raíz del repo por error
+*serviceaccount*.json
+*service-account*.json
+
+
+# =============================================================================
+# Python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Builds / distribuciones
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+
+# =============================================================================
+# Entornos virtuales
+# =============================================================================
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+
+# =============================================================================
+# Streamlit
+# =============================================================================
+.streamlit/secrets.toml
+.streamlit/cache/
+
+
+# =============================================================================
+# LangGraph / LangChain
+# =============================================================================
+.langgraph_api/
+.langchain.db
+
+
+# =============================================================================
+# IDEs / editores
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+
+
+# =============================================================================
+# macOS
+# =============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+
+# =============================================================================
+# Logs y archivos temporales
+# =============================================================================
+*.log
+logs/
+*.tmp
+*.bak
