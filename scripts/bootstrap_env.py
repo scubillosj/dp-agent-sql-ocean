@@ -1,5 +1,5 @@
 """
-Arranque en producción: lee /app/.env de EasyPanel y prepara credenciales GCP.
+Arranque en producción: carga env de EasyPanel + .env.gcp (GitHub Actions) y escribe GCP JSON.
 """
 import base64
 import os
@@ -42,14 +42,16 @@ def setup_google_credentials() -> None:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(Path(cred_path).resolve())
     else:
         print(
-            "ERROR: En EasyPanel agrega GOOGLE_CREDENTIALS_B64 (recomendado) o "
-            "GOOGLE_CREDENTIALS_JSON en el .env.",
+            "ERROR: Falta credencial GCP. Opciones:\n"
+            "  1) Ejecuta el workflow 'Sync GCP credentials' en GitHub Actions, o\n"
+            "  2) En EasyPanel agrega GOOGLE_CREDENTIALS_B64 al .env.",
             file=sys.stderr,
         )
         sys.exit(1)
 
 
 load_dotenv("/app/.env")
+load_dotenv("/app/.env.gcp")
 load_dotenv()
 setup_google_credentials()
 

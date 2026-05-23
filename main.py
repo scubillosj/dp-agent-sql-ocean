@@ -235,11 +235,8 @@ with st.sidebar:
     creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     bigquery_ok = bool(
         os.getenv("GOOGLE_CLOUD_PROJECT")
-        and (
-            (creds_path and os.path.isfile(creds_path))
-            or os.getenv("GOOGLE_CREDENTIALS_B64")
-            or os.getenv("GOOGLE_CREDENTIALS_JSON")
-        )
+        and creds_path
+        and os.path.isfile(creds_path)
     )
     history_ok = bool(os.getenv("DB_USER") and os.getenv("DB_PASSWORD") and os.getenv("DB_HOST"))
 

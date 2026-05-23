@@ -85,30 +85,14 @@ Abre `http://localhost:8000`.
 
 ## EasyPanel (Droplet)
 
-En el `.env` de EasyPanel pon OpenAI, Supabase y Google.
+En el `.env` de EasyPanel: OpenAI, Supabase y **solo** `GOOGLE_CLOUD_PROJECT` / `GOOGLE_CLOUD_LOCATION`.
 
-### Google en Base64 (recomendado)
+**No** pegues el JSON ni `GOOGLE_CREDENTIALS_B64` en EasyPanel (el editor trunca líneas largas).
 
-En PowerShell (local):
+Las credenciales GCP van con **GitHub Actions** → ver [DEPLOY-GITHUB-ACTIONS.md](./DEPLOY-GITHUB-ACTIONS.md).
 
-```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("credentials\tu-archivo.json")) | Set-Clipboard
-```
-
-En EasyPanel `.env`:
-
-```env
-GOOGLE_CLOUD_PROJECT=datapath-prueba
-GOOGLE_CLOUD_LOCATION=us-central1
-GOOGLE_CREDENTIALS_B64=pega_la_linea_base64_aqui
-```
-
-**No** uses `GOOGLE_APPLICATION_CREDENTIALS=credentials/archivo.json` en EasyPanel.
-
-Guardar → **Redeploy**. Tras cambios de código: `git push` y redeploy en EasyPanel.
+Tras cada redeploy en EasyPanel, vuelve a ejecutar el workflow **Sync GCP credentials**.
 
 ## Notas
-
-- **No** uses GitHub Actions para secretos; van en el panel de DO / EasyPanel.
 - Si cambias código: `git push` y redeploy.
 - El histórico de chat y las tablas de LangGraph se crean solos en Supabase al primer arranque.
