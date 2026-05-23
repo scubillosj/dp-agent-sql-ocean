@@ -1,0 +1,57 @@
+# Solo sube el JSON de GCP al contenedor.
+# El secret GOOGLE_APPLICATION_CREDENTIALS = contenido completo del archivo .json
+# EasyPanel sigue con el resto del .env (OpenAI, Supabase, GOOGLE_CLOUD_PROJECT, etc.)
+
+name: Deploy Google credentials
+
+on:
+  workflow_dispatch:
+
+jobs:
+  google-credentials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar archivo JSON
+        env:
+          GCP_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          printf '%s' "$GCP_JSON" > gcp-sa.json
+          test -s gcp-sa.json || (echo "ERROR: secret GOOGLE_APPLICATION_CREDENTIALS vacío" && exit 1)
+
+      - name: Copiar JSON al Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          source: "gcp-sa.json"
+          target: "/tmp"
+          overwrite: true
+
+      - name: Instalar en el contenedor y reiniciar
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT || 22 }}
+          script: |
+            set -e
+            CONTAINER="${{ secrets.DOCKER_CONTAINER_NAME }}"
+            if [ -z "$CONTAINER" ]; then
+              CONTAINER=$(docker ps --format '{{.Names}}' | grep -i 'dp-agent' | head -n1)
+            fi
+            if [ -z "$CONTAINER" ]; then
+              echo "ERROR: Define DOCKER_CONTAINER_NAME (salida de docker ps)."
+              docker ps --format '{{.Names}}'
+              exit 1
+            fi
+            CRED_PATH="/app/credentials/gcp-sa.json"
+            docker exec "$CONTAINER" mkdir -p /app/credentials
+            docker cp /tmp/gcp-sa.json "$CONTAINER:$CRED_PATH"
+            docker exec "$CONTAINER" chmod 600 "$CRED_PATH"
+            printf '%s\n' "GOOGLE_APPLICATION_CREDENTIALS=$CRED_PATH" > /tmp/.env.google
+            docker cp /tmp/.env.google "$CONTAINER:/app/.env.google"
+            docker restart "$CONTAINER"
+            echo "OK: $CRED_PATH instalado"

@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 # main.py - Interfaz web con Streamlit para el agente LangGraph
 
+from dotenv import load_dotenv
+
+# Cargar .env ANTES de importar módulos que inicializan OpenAI/BigQuery
+load_dotenv()
+
 import os
 import uuid
 
 import streamlit as st
-from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage
 
 from agent_runner import build_app, run_agent
@@ -14,8 +18,6 @@ from conversation_or_chat_history import (
     get_checkpointer,
     get_schema_name,
 )
-
-load_dotenv()
 
 # ============================================
 # CONFIGURACIÓN DE LA PÁGINA
@@ -230,12 +232,11 @@ with st.sidebar:
 
     # Verificar configuración
     openai_ok = bool(os.getenv("OPENAI_API_KEY"))
+    creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     bigquery_ok = bool(
         os.getenv("GOOGLE_CLOUD_PROJECT")
-        and (
-            os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-            or os.getenv("GOOGLE_CREDENTIALS_JSON")
-        )
+        and creds_path
+        and os.path.isfile(creds_path)
     )
     history_ok = bool(os.getenv("DB_USER") and os.getenv("DB_PASSWORD") and os.getenv("DB_HOST"))
 
